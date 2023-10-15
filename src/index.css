@@ -1,0 +1,17 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap'); */
+html,
+body,
+#root {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: system-ui;
+  background-color: #131516;
+}
+
+.print {
+  /* color: red; */
+  background-color: white;
+}
