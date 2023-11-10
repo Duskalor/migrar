@@ -15,7 +15,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import React, { useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getDetalleEntradas } from '../ProductoEntrada/productoEntradaSlice';
 import { getProductos } from '../Productos/productosSlice';

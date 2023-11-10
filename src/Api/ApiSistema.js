@@ -5,6 +5,7 @@ import axios from 'axios';
 // });
 // const URL = 'https://api-sistema-de-almacenes-production.up.railway.app/';
 const URL = 'http://127.0.0.1:8000/';
+// const URL = 'http://127.0.0.1:5174/';
 
 export const apiSistema = axios.create({
   baseURL: `${URL}api/`,

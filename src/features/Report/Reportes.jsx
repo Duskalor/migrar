@@ -1,5 +1,5 @@
 import { Box, Button } from '@mui/material';
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { utils, writeFile } from 'xlsx';
@@ -8,7 +8,13 @@ import { useReporte } from '../../utils/useReporte';
 import { formatDate } from '../../utils/formatDate';
 import { BoxError } from '../../components/BoxError';
 import { v4 } from 'uuid';
+import { useSelector } from 'react-redux';
+
 export const Reportes = ({ handleClose }) => {
+  const { productoEntradaBD } = useSelector((state) => state.ProductoEntrada);
+  const { productoSalidaBD } = useSelector((state) => state.ProductoSalida);
+  const { productos } = useSelector((state) => state.Productos);
+
   const RamdomId = useRef(v4());
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -20,6 +26,34 @@ export const Reportes = ({ handleClose }) => {
     id: RamdomId.current,
     Codigo: 'All',
   });
+
+  const handleProductFilter = (id) => {
+    const fltrEntr = productoEntradaBD.filter((a) => a.IdProducto === id);
+    const fltrSalid = productoSalidaBD.filter((a) => a.IdProducto === id);
+    const newArray = [...fltrEntr, ...fltrSalid];
+    const producto = productos.find((pro) => pro.id === id);
+
+    const NewCositas = newArray.map((arr) => {
+      const accion = arr.IdEntrada ? 'entrada' : 'salida';
+      return {
+        descripcion: producto.Descripcion,
+        cantidad: arr.Cantidad,
+        accion,
+        created_at: new Date(arr.created_at),
+      };
+    });
+
+    var wb = utils.book_new(),
+      ws = utils.json_to_sheet(NewCositas);
+    utils.book_append_sheet(wb, ws, `Reports`);
+    writeFile(wb, `Categoria-${producto.Descripcion}.xlsx`);
+  };
+
+  const handleClickCategories = () => {
+    handleProductFilter(filterProducto.id);
+    console.log(filterProducto.id);
+  };
+
   // console.log(filterProducto);
   const { Reporte } = useReporte();
 
@@ -56,6 +90,7 @@ export const Reportes = ({ handleClose }) => {
             created_at: new Date(item.created_at),
           }))
         );
+
       utils.book_append_sheet(wb, ws, `Reports`);
       writeFile(
         wb,
@@ -85,7 +120,7 @@ export const Reportes = ({ handleClose }) => {
         RamdomId={RamdomId}
       />
 
-      <Box>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 4 }}>
         <select
           value={all}
           onChange={(e) => {
@@ -97,6 +132,14 @@ export const Reportes = ({ handleClose }) => {
           <option value='Entrada'>Entrada</option>
           <option value='Salida'>Salida</option>
         </select>
+
+        <Button
+          variant='contained'
+          disabled={filterProducto.id === RamdomId.current}
+          onClick={handleClickCategories}
+        >
+          reportes producto
+        </Button>
       </Box>
 
       <Box sx={{ display: 'flex', gap: '1rem' }}>
